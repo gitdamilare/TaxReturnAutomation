@@ -1,5 +1,4 @@
 ﻿using TaxReturnAutomation.Application.Common.Interfaces;
-using TaxReturnAutomation.Domain.Constants;
 using TaxReturnAutomation.Infrastructure.Data;
 using TaxReturnAutomation.Infrastructure.Data.Interceptors;
 using TaxReturnAutomation.Infrastructure.Identity;
@@ -45,8 +44,5 @@ public static class DependencyInjection
 
         builder.Services.AddSingleton(TimeProvider.System);
         builder.Services.AddTransient<IIdentityService, IdentityService>();
-
-        builder.Services.AddAuthorization(options =>
-            options.AddPolicy(Policies.CanPurge, policy => policy.RequireRole(Roles.Administrator)));
     }
 }

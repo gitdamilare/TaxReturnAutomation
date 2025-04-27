@@ -9,4 +9,10 @@
     <PackageReference Include="MediatR" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Constants\" />
+    <Folder Include="Events\" />
+    <Folder Include="ValueObjects\" />
+  </ItemGroup>
+
 </Project>
