@@ -1,7 +1,11 @@
 ﻿global using Ardalis.GuardClauses;
 global using Azure.Storage.Blobs;
 global using Microsoft.Extensions.Logging;
+global using System.Globalization;
+global using System.Text.RegularExpressions;
+global using UglyToad.PdfPig;
 
+global using TaxReturnAutomation.Domain.Enums;
 global using TaxReturnAutomation.Application.Common.Interfaces;
 global using TaxReturnAutomation.Domain.Entities;
 
