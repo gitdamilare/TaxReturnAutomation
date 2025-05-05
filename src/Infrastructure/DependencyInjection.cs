@@ -1,5 +1,4 @@
-﻿using TaxReturnAutomation.Application.Common.Interfaces;
-using TaxReturnAutomation.Infrastructure.Data;
+﻿using TaxReturnAutomation.Infrastructure.Data;
 using TaxReturnAutomation.Infrastructure.Data.Interceptors;
 using TaxReturnAutomation.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -7,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using TaxReturnAutomation.Infrastructure.Storage;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -44,5 +44,7 @@ public static class DependencyInjection
 
         builder.Services.AddSingleton(TimeProvider.System);
         builder.Services.AddTransient<IIdentityService, IdentityService>();
+
+        builder.Services.AddTransient<IFileStorageService, BlobStorageService>();
     }
 }
