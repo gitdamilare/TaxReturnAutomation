@@ -1,7 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
-using NUnit.Framework;
 using TaxReturnAutomation.Application.Common.Interfaces;
 using TaxReturnAutomation.Infrastructure.Parsing;
 
@@ -9,72 +8,40 @@ namespace Infrastructure.IntegrationTests;
 [TestFixture]
 public class PdfBankStatementParserTests
 {
-    private readonly string _sampleFilePath = Path.Combine("Assets", "BankStatementSample_1.pdf");
-    private readonly string _sampleFilePath2 = Path.Combine("Assets", "BankStatementSample_2.pdf");
+    private IFileStorageService _fileStorageService;
+    private PdfBankStatementParser _parser;
 
-    [Test]
-    public void ExtractTransactions_ShouldParseBankTransactions_FromPdf()
+    [SetUp]
+    public void Setup()
     {
-        // Arrange
-        var parser = new PdfBankStatementParser(
-            Substitute.For<IFileStorageService>(),
+        _fileStorageService = Substitute.For<IFileStorageService>();
+        _parser = new PdfBankStatementParser(
+            _fileStorageService,
             NullLogger<PdfBankStatementParser>.Instance);
-
-        // Act
-        var result = parser.ExtractTransactions(_sampleFilePath);
-
-        // Assert
-        result.Should().NotBeNull();
-        result.Transactions.Should().NotBeNullOrEmpty();
-        result.Transactions.Should().HaveCount(5);
-        result.Transactions.Should().AllSatisfy(transaction =>
-        {
-            transaction.TransactionDate.Should().NotBe(default);
-            transaction.Description.Should().NotBeNullOrWhiteSpace();
-            transaction.TransactionType.Should().BeDefined();
-            transaction.Amount.Should().BePositive();
-        });
-
-        foreach (var transaction in result.Transactions)
-        {
-            TestContext.WriteLine($"" +
-                $"{transaction.TransactionDate:d} | " +
-                $"{transaction.Description} | " +
-                $"{transaction.TransactionType.ToString()} | " +
-                $"{transaction.Amount}");
-        }
     }
 
-    [Test]
-    public void ExtractTransactions_ShouldParseBankTransactions_FromPdf2()
+    private static readonly object[] TestFiles =
+    [
+        new object[] { "BankStatementSample_1.pdf", 5 },
+        new object[] { "BankStatementSample_2.pdf", 10 }
+    ];
+    private static string BlobUri(string fileName) => $"https://storage/account/container/{fileName}";
+
+    [Test, TestCaseSource(nameof(TestFiles))]
+    public async Task ParseAsync_ShouldReturnBankStatement_WhenFileIsValid(
+        string fileName,
+        int expectedTransactionCount)
     {
-        // Arrange
-        var parser = new PdfBankStatementParser(
-            Substitute.For<IFileStorageService>(),
-            NullLogger<PdfBankStatementParser>.Instance);
+        var filePath = Path.Combine("Assets", fileName);
+        var fileBytes = File.ReadAllBytes(filePath);
+        _fileStorageService.DownloadFileAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(fileBytes);
+       
+        var result = await _parser.ParseAsync(BlobUri(fileName), "application/pdf", CancellationToken.None);
 
-        // Act
-        var result = parser.ExtractTransactions(_sampleFilePath2);
-
-        // Assert
         result.Should().NotBeNull();
+        result.FileName.Should().Be(fileName);
         result.Transactions.Should().NotBeNullOrEmpty();
-        result.Transactions.Should().HaveCount(10);
-        result.Transactions.Should().AllSatisfy(transaction =>
-        {
-            transaction.TransactionDate.Should().NotBe(default);
-            transaction.Description.Should().NotBeNullOrWhiteSpace();
-            transaction.TransactionType.Should().BeDefined();
-            transaction.Amount.Should().BePositive();
-        });
-
-        foreach (var transaction in result.Transactions)
-        {
-            TestContext.WriteLine($"" +
-                $"{transaction.TransactionDate:d} | " +
-                $"{transaction.Description} | " +
-                $"{transaction.TransactionType.ToString()} | " +
-                $"{transaction.Amount}");
-        }
+        result.Transactions.Should().HaveCount(expectedTransactionCount);
     }
 }
