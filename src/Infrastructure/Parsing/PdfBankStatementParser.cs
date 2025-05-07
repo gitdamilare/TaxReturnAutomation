@@ -1,9 +1,4 @@
-﻿using System.Globalization;
-using System.Text.RegularExpressions;
-using TaxReturnAutomation.Domain.Enums;
-using UglyToad.PdfPig;
-
-namespace TaxReturnAutomation.Infrastructure.Parsing;
+﻿namespace TaxReturnAutomation.Infrastructure.Parsing;
 public class PdfBankStatementParser : IBankStatementParser
 {
     private readonly IFileStorageService _fileStorageService;

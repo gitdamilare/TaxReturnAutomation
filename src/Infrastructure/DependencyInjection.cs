@@ -1,14 +1,4 @@
-﻿using TaxReturnAutomation.Infrastructure.Data;
-using TaxReturnAutomation.Infrastructure.Data.Interceptors;
-using TaxReturnAutomation.Infrastructure.Identity;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using TaxReturnAutomation.Infrastructure.Storage;
-
-namespace Microsoft.Extensions.DependencyInjection;
+﻿namespace Microsoft.Extensions.DependencyInjection;
 
 public static class DependencyInjection
 {
@@ -46,5 +36,6 @@ public static class DependencyInjection
         builder.Services.AddTransient<IIdentityService, IdentityService>();
 
         builder.Services.AddTransient<IFileStorageService, BlobStorageService>();
+        builder.Services.AddTransient<IBankStatementParser, PdfBankStatementParser>();
     }
 }
