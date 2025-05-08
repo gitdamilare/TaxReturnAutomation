@@ -2,11 +2,11 @@
 public class BankTransaction
 {
     public Guid Id { get; private set; } = Guid.NewGuid();
-
     public DateTime TransactionDate { get; private set; }
     public decimal Amount { get; private set; }
     public string Description { get; private set; } = string.Empty;
     public TransactionType TransactionType { get; private set; }
+
     public Guid BankStatementId { get; private set; }
 
     private BankTransaction() { }
@@ -32,5 +32,4 @@ public class BankTransaction
             BankStatementId = bankStatementId,
         };
     }
-
 }

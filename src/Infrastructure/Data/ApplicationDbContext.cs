@@ -1,14 +1,14 @@
-﻿using System.Reflection;
-using TaxReturnAutomation.Application.Common.Interfaces;
-using TaxReturnAutomation.Infrastructure.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿namespace TaxReturnAutomation.Infrastructure.Data;
 
-namespace TaxReturnAutomation.Infrastructure.Data;
-
-public class ApplicationDbContext : IdentityDbContext<ApplicationUser>, IApplicationDbContext
+public class ApplicationDbContext : DbContext, IApplicationDbContext
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+
+    public DbSet<BankStatement> BankStatements => Set<BankStatement>();
+    public DbSet<BankTransaction> BankTransactions => Set<BankTransaction>();
+    public DbSet<Receipt> Receipts => Set<Receipt>();
+    public DbSet<ProcessedFile> ProcessedFiles => Set<ProcessedFile>();
+    public DbSet<MatchResult> MatchResults => Set<MatchResult>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

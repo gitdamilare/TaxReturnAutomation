@@ -1,6 +1,5 @@
 ﻿using TaxReturnAutomation.Domain.Common;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace TaxReturnAutomation.Infrastructure.Data.Interceptors;
