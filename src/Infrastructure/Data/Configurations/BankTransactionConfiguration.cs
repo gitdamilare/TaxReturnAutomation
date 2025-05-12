@@ -4,7 +4,7 @@ public class BankTransactionConfiguration : IEntityTypeConfiguration<BankTransac
     public void Configure(EntityTypeBuilder<BankTransaction> builder)
     {
         const string TableName = "BankTransactions";
-        const int DescriptionMaxLength = 500;
+        const int DescriptionMaxLength = 2000;
         const int TransactionTypeMaxLength = 20;
 
 
