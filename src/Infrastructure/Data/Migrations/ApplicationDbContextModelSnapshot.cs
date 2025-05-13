@@ -93,7 +93,7 @@ namespace TaxReturnAutomation.Infrastructure.Data.Migrations
                     b.Property<DateTime>("MatchedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ReceiptId")
+                    b.Property<Guid>("InvoiceId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -101,7 +101,7 @@ namespace TaxReturnAutomation.Infrastructure.Data.Migrations
                     b.HasIndex("BankTransactionId")
                         .IsUnique();
 
-                    b.HasIndex("ReceiptId")
+                    b.HasIndex("InvoiceId")
                         .IsUnique();
 
                     b.ToTable("MatchResults", (string)null);
@@ -131,7 +131,7 @@ namespace TaxReturnAutomation.Infrastructure.Data.Migrations
                     b.ToTable("ProcessedFiles", (string)null);
                 });
 
-            modelBuilder.Entity("TaxReturnAutomation.Domain.Entities.Receipt", b =>
+            modelBuilder.Entity("TaxReturnAutomation.Domain.Entities.Invoice", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -155,7 +155,7 @@ namespace TaxReturnAutomation.Infrastructure.Data.Migrations
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ReceiptNumber")
+                    b.Property<string>("InvoiceNumber")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -168,7 +168,7 @@ namespace TaxReturnAutomation.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Receipts", (string)null);
+                    b.ToTable("Invoices", (string)null);
                 });
 
             modelBuilder.Entity("TaxReturnAutomation.Domain.Entities.BankTransaction", b =>
@@ -188,15 +188,15 @@ namespace TaxReturnAutomation.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TaxReturnAutomation.Domain.Entities.Receipt", "Receipt")
+                    b.HasOne("TaxReturnAutomation.Domain.Entities.Invoice", "Invoice")
                         .WithOne()
-                        .HasForeignKey("TaxReturnAutomation.Domain.Entities.MatchResult", "ReceiptId")
+                        .HasForeignKey("TaxReturnAutomation.Domain.Entities.MatchResult", "InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("BankTransaction");
 
-                    b.Navigation("Receipt");
+                    b.Navigation("Invoice");
                 });
 
             modelBuilder.Entity("TaxReturnAutomation.Domain.Entities.BankStatement", b =>

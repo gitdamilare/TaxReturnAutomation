@@ -1,8 +1,8 @@
 ﻿namespace TaxReturnAutomation.Application.Common.Interfaces;
 public interface ITransactionMatcher
 {
-    Task<IEnumerable<TransactionMatchResult>> MatchReceiptsToTransactionsAsync(
-        IEnumerable<Receipt> receipts,
+    Task<IEnumerable<TransactionMatchResult>> MatchInvoicesToTransactionsAsync(
+        IEnumerable<Invoice> invoices,
         IEnumerable<BankTransaction> transactions, 
         CancellationToken cancellationTokenCanc);
 }

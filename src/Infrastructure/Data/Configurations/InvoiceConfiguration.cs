@@ -1,9 +1,9 @@
 ﻿namespace TaxReturnAutomation.Infrastructure.Data.Configurations;
-public class ReceiptConfiguration : IEntityTypeConfiguration<Receipt>
+public class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
 {
-    public void Configure(EntityTypeBuilder<Receipt> builder)
+    public void Configure(EntityTypeBuilder<Invoice> builder)
     {
-        const string TableName = "Receipts";
+        const string TableName = "Invoices";
         const int FileNameMaxLength = 255;
         const int DescriptionMaxLength = 2000;
         const int CommonMaxLength = 100;
@@ -23,7 +23,7 @@ public class ReceiptConfiguration : IEntityTypeConfiguration<Receipt>
             .IsRequired()
             .HasMaxLength(DescriptionMaxLength);
 
-        builder.Property(r => r.ReceiptNumber)
+        builder.Property(r => r.InvoiceNumber)
             .HasMaxLength(CommonMaxLength);
 
         builder.Property(r => r.CustomerName)

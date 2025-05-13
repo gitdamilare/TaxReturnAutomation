@@ -39,12 +39,12 @@ namespace TaxReturnAutomation.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Receipts",
+                name: "Invoices",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FileName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    ReceiptNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    InvoiceNumber = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CustomerName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     UploadedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PurchaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -53,7 +53,7 @@ namespace TaxReturnAutomation.Infrastructure.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Receipts", x => x.Id);
+                    table.PrimaryKey("PK_Invoices", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -86,7 +86,7 @@ namespace TaxReturnAutomation.Infrastructure.Data.Migrations
                     MatchedAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     MatchedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     MatchConfidence = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
-                    ReceiptId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    InvoiceId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     BankTransactionId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
@@ -99,9 +99,9 @@ namespace TaxReturnAutomation.Infrastructure.Data.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_MatchResults_Receipts_ReceiptId",
-                        column: x => x.ReceiptId,
-                        principalTable: "Receipts",
+                        name: "FK_MatchResults_Invoices_InvoiceId",
+                        column: x => x.InvoiceId,
+                        principalTable: "Invoices",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -118,9 +118,9 @@ namespace TaxReturnAutomation.Infrastructure.Data.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_MatchResults_ReceiptId",
+                name: "IX_MatchResults_InvoiceId",
                 table: "MatchResults",
-                column: "ReceiptId",
+                column: "InvoiceId",
                 unique: true);
         }
 
@@ -137,7 +137,7 @@ namespace TaxReturnAutomation.Infrastructure.Data.Migrations
                 name: "BankTransactions");
 
             migrationBuilder.DropTable(
-                name: "Receipts");
+                name: "Invoices");
 
             migrationBuilder.DropTable(
                 name: "BankStatements");

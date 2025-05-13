@@ -21,9 +21,9 @@ public class MatchResultConfiguration : IEntityTypeConfiguration<MatchResult>
             .HasMaxLength(MatchConfidenceMaxLength)
             .IsRequired();
 
-        builder.HasOne(m => m.Receipt)
+        builder.HasOne(m => m.Invoice)
             .WithOne()
-            .HasForeignKey<MatchResult>(m => m.ReceiptId)
+            .HasForeignKey<MatchResult>(m => m.InvoiceId)
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasOne(m => m.BankTransaction)
@@ -31,7 +31,7 @@ public class MatchResultConfiguration : IEntityTypeConfiguration<MatchResult>
             .HasForeignKey<MatchResult>(m => m.BankTransactionId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        builder.HasIndex(m => m.ReceiptId).IsUnique();
+        builder.HasIndex(m => m.InvoiceId).IsUnique();
         builder.HasIndex(m => m.BankTransactionId).IsUnique();
     }
 }

@@ -2,5 +2,5 @@
 public enum FileType
 {
     BankStatement,
-    Receipt
+    Invoice
 }
