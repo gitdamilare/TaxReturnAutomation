@@ -10,7 +10,7 @@ public class BankStatement
 
     private BankStatement() { }
 
-    public static BankStatement Create(string fileName)
+    public static BankStatement Create(string? fileName)
     {
         ArgumentNullException.ThrowIfNull(fileName);
         return new BankStatement

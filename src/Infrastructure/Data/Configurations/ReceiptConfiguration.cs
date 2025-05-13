@@ -5,7 +5,7 @@ public class ReceiptConfiguration : IEntityTypeConfiguration<Receipt>
     {
         const string TableName = "Receipts";
         const int FileNameMaxLength = 255;
-        const int DescriptionMaxLength = 500;
+        const int DescriptionMaxLength = 2000;
         const int CommonMaxLength = 100;
 
         builder.ToTable(TableName);

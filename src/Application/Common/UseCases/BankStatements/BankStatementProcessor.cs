@@ -1,14 +1,16 @@
-﻿namespace TaxReturnAutomation.Application.Common.UseCases.BankStatements;
+﻿using TaxReturnAutomation.Application.Common.Mapper;
+
+namespace TaxReturnAutomation.Application.Common.UseCases.BankStatements;
 internal class BankStatementProcessor : IBankStatementProcessor
 {
-    private readonly IBankStatementStorage _bankStatementStorage;
+    private readonly IBankStatementRepository _bankStatementRepository;
     private readonly IBankStatementParser _bankStatementParser;
 
     public BankStatementProcessor(
-        IBankStatementStorage bankStatementStorage,
+        IBankStatementRepository bankStatementStorage,
         IBankStatementParser bankStatementParser)
     {
-        _bankStatementStorage = bankStatementStorage;
+        _bankStatementRepository = bankStatementStorage;
         _bankStatementParser = bankStatementParser;
     }
 
@@ -16,12 +18,14 @@ internal class BankStatementProcessor : IBankStatementProcessor
         ProcessBankStatementRequest request, 
         CancellationToken cancellationToken)
     {
-        var bankStatement = await _bankStatementParser.ParseAsync(
-            request.BlobUri,
+        var bankStatementDto = await _bankStatementParser.ParseAsync(
+            request.FileUri,
             request.ContentType,
             cancellationToken);
 
-        await _bankStatementStorage.SaveBankStatementAsync(bankStatement, cancellationToken);
+        var bankStatement = BankStatementMapper.MapFromDto(bankStatementDto);
+
+        await _bankStatementRepository.SaveBankStatementAsync(bankStatement, cancellationToken);
 
         return new ProcessBankStatementResponse(bankStatement.Id, bankStatement.Transactions.Count);
     }

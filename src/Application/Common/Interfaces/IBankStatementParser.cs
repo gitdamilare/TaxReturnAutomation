@@ -1,8 +1,8 @@
 ﻿namespace TaxReturnAutomation.Application.Common.Interfaces;
 public interface IBankStatementParser
 {
-    Task<BankStatement> ParseAsync(
-        string blobUri, 
+    Task<BankStatementDto> ParseAsync(
+        Uri fileUri, 
         string contentType, 
         CancellationToken cancellationToken);
 }

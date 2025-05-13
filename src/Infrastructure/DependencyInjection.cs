@@ -1,7 +1,8 @@
 ﻿using TaxReturnAutomation.Infrastructure.Data;
 using TaxReturnAutomation.Infrastructure.Data.Interceptors;
-using TaxReturnAutomation.Infrastructure.Storage;
 using TaxReturnAutomation.Infrastructure.Parsing;
+using TaxReturnAutomation.Infrastructure.Persistence;
+using TaxReturnAutomation.Infrastructure.Services;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -9,7 +10,7 @@ public static class DependencyInjection
 {
     public static void AddInfrastructureServices(this IHostApplicationBuilder builder)
     {       
-        var connectionString = builder.Configuration["TaxReturnAutomationDb"];
+        var connectionString = builder.Configuration["ConnectionStrings:TaxReturnAutomationDb"];
         Guard.Against.Null(connectionString, message: "Connection string 'TaxReturnAutomationDb' not found.");
 
         builder.Services.AddScoped<ISaveChangesInterceptor, AuditableEntityInterceptor>();
@@ -17,7 +18,7 @@ public static class DependencyInjection
 
         builder.Services.AddDbContext<ApplicationDbContext>((sp, options) =>
         {
-            options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
+            //options.AddInterceptors(sp.GetServices<ISaveChangesInterceptor>());
             options.UseSqlServer(connectionString);
         });
 
@@ -34,6 +35,8 @@ public static class DependencyInjection
         builder.Services.AddSingleton(TimeProvider.System);
 
         builder.Services.AddTransient<IFileStorageService, BlobStorageService>();
-        builder.Services.AddTransient<IBankStatementParser, PdfBankStatementParser>();
+        builder.Services.AddTransient<IBankStatementParser, AzureFormRecognizerBankStatementParser>();
+        builder.Services.AddScoped<IFileProcessingTracker, FileProcessingTracker>();
+        builder.Services.AddScoped<IBankStatementRepository, BankStatementRepository>();
     }
 }

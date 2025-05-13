@@ -2,6 +2,6 @@
 public interface IFileStorageService
 {
     Task<byte[]> DownloadFileAsync(
-        string blobUri,
+        Uri fileUri,
         CancellationToken cancellationToken);
 }

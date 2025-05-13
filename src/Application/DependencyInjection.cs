@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using TaxReturnAutomation.Application.Common.Behaviours;
 using Microsoft.Extensions.Hosting;
+using TaxReturnAutomation.Application.Common.UseCases.BankStatements;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -19,5 +20,7 @@ public static class DependencyInjection
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
             cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(PerformanceBehaviour<,>));
         });
+
+        builder.Services.AddScoped<IBankStatementProcessor, BankStatementProcessor>();
     }
 }

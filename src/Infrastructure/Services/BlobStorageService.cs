@@ -1,22 +1,18 @@
-﻿namespace TaxReturnAutomation.Infrastructure.Storage;
+﻿namespace TaxReturnAutomation.Infrastructure.Services;
 public class BlobStorageService : IFileStorageService
 {
-    private readonly BlobServiceClient _blobServiceClient;
     private readonly ILogger<BlobStorageService> _logger;
 
-    public BlobStorageService(
-        BlobServiceClient blobServiceClient,
-        ILogger<BlobStorageService> logger)
+    public BlobStorageService(ILogger<BlobStorageService> logger)
     {
-        _blobServiceClient = blobServiceClient;
         _logger = logger;
     }
 
-    public async Task<byte[]> DownloadFileAsync(string blobUri, CancellationToken cancellationToken)
+    public async Task<byte[]> DownloadFileAsync(Uri fileUri, CancellationToken cancellationToken)
     {
         try
         {
-            var blobClient = new BlobClient(new Uri(blobUri));
+            var blobClient = new BlobClient(fileUri);
             var response = await blobClient.DownloadAsync(cancellationToken: cancellationToken);
             using var memoryStream = new MemoryStream();
             await response.Value.Content.CopyToAsync(memoryStream, cancellationToken);
@@ -24,7 +20,7 @@ public class BlobStorageService : IFileStorageService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Failed to download blob from {BlobUri}", blobUri);
+            _logger.LogError(ex, "Failed to download blob from {BlobUri}", fileUri);
             throw;
         }
     }
