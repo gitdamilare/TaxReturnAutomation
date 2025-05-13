@@ -1,7 +1,7 @@
 ﻿namespace TaxReturnAutomation.Application.Common.Interfaces;
-public interface IBankStatementStorage
+public interface IBankStatementRepository
 {
     Task SaveBankStatementAsync(BankStatement bankStatement, CancellationToken cancellationToken);
-    Task<BankStatement?> GetBankStatementByIdAsync(Guid statementId, CancellationToken cancellationToken);
+    ValueTask<BankStatement?> GetBankStatementByIdAsync(Guid statementId, CancellationToken cancellationToken);
     Task<IEnumerable<BankTransaction>> GetAllTransactionsAsync(CancellationToken cancellationToken);
 }
