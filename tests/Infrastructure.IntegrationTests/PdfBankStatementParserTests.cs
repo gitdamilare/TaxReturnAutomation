@@ -25,7 +25,7 @@ public class PdfBankStatementParserTests
         new object[] { "BankStatementSample_1.pdf", 5 },
         new object[] { "BankStatementSample_2.pdf", 10 }
     ];
-    private static string BlobUri(string fileName) => $"https://storage/account/container/{fileName}";
+    private static Uri BlobUri(string fileName) => new($"https://storage/account/container/{fileName}");
 
     [Test, TestCaseSource(nameof(TestFiles))]
     public async Task ParseAsync_ShouldReturnBankStatement_WhenFileIsValid(
@@ -34,7 +34,7 @@ public class PdfBankStatementParserTests
     {
         var filePath = Path.Combine("Assets", fileName);
         var fileBytes = File.ReadAllBytes(filePath);
-        _fileStorageService.DownloadFileAsync(Arg.Any<string>(), Arg.Any<CancellationToken>())
+        _fileStorageService.DownloadFileAsync(Arg.Any<Uri>(), Arg.Any<CancellationToken>())
             .Returns(fileBytes);
        
         var result = await _parser.ParseAsync(BlobUri(fileName), "application/pdf", CancellationToken.None);
