@@ -35,8 +35,12 @@ public static class DependencyInjection
         builder.Services.AddSingleton(TimeProvider.System);
 
         builder.Services.AddTransient<IFileStorageService, BlobStorageService>();
-        builder.Services.AddTransient<IBankStatementParser, AzureFormRecognizerBankStatementParser>();
         builder.Services.AddScoped<IFileProcessingTracker, FileProcessingTracker>();
+
+        builder.Services.AddTransient<IBankStatementParser, AzureFormRecognizerBankStatementParser>();
         builder.Services.AddScoped<IBankStatementRepository, BankStatementRepository>();
+
+        builder.Services.AddScoped<IInvoiceParser, AzureFormRecongnizerInvoiceParser>();
+        builder.Services.AddScoped<IInvoiceStorage, InvoiceRepository>();
     }
 }

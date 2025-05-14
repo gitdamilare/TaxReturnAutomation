@@ -2,6 +2,7 @@
 using TaxReturnAutomation.Application.Common.Behaviours;
 using Microsoft.Extensions.Hosting;
 using TaxReturnAutomation.Application.Common.UseCases.BankStatements;
+using TaxReturnAutomation.Application.Common.UseCases.Invoice;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -22,5 +23,6 @@ public static class DependencyInjection
         });
 
         builder.Services.AddScoped<IBankStatementProcessor, BankStatementProcessor>();
+        builder.Services.AddScoped<IInvoiceProcessor, InvoiceProcessor>();
     }
 }
