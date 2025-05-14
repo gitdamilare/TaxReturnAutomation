@@ -5,6 +5,7 @@ public class ProcessedFileConfiguration : IEntityTypeConfiguration<ProcessedFile
     {
         const string TableName = "ProcessedFiles";
         const int FileNameMaxLength = 255;
+        const int EnumMaxLength = 20;
 
         builder.ToTable(TableName);
 
@@ -19,7 +20,12 @@ public class ProcessedFileConfiguration : IEntityTypeConfiguration<ProcessedFile
 
         builder.Property(p => p.FileType)
             .HasConversion<string>()
-            .HasMaxLength(20)
+            .HasMaxLength(EnumMaxLength)
+            .IsRequired();
+
+        builder.Property(p => p.Status)
+            .HasConversion<string>()
+            .HasMaxLength(EnumMaxLength)
             .IsRequired();
     }
 }

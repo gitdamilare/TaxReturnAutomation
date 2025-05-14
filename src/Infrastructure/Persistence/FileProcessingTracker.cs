@@ -12,14 +12,14 @@ public class FileProcessingTracker : IFileProcessingTracker
     public async Task<bool> IsFileAlreadyProcessedAsync(string fileName, CancellationToken cancellationToken = default)
     {
         return await _dbContext.ProcessedFiles
-            .AnyAsync(x => x.FileName == fileName, cancellationToken);
+            .AnyAsync(x => x.FileName == fileName && x.Status == ProcessStatus.Completed, cancellationToken);
     }
 
-    public async Task MarkFileAsProcessedAsync(string fileName, FileType fileType, CancellationToken cancellationToken = default)
+    public async Task MarkFileAsProcessedAsync(string fileName, FileType fileType, ProcessStatus processStatus, CancellationToken cancellationToken = default)
     {
         if(!await IsFileAlreadyProcessedAsync(fileName, cancellationToken))
         {
-            var processedFile = ProcessedFile.Create(fileName, fileType);
+            var processedFile = ProcessedFile.Create(fileName, fileType, processStatus);
             _dbContext.ProcessedFiles.Add(processedFile);
             await _dbContext.SaveChangesAsync(cancellationToken);
         }
