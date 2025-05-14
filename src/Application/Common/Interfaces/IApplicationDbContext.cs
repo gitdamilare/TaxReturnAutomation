@@ -3,7 +3,7 @@
 public interface IApplicationDbContext
 {
     DbSet<BankStatement> BankStatements { get; }
-    DbSet<Receipt> Receipts { get; }
+    DbSet<Invoice> Invoices { get; }
     DbSet<ProcessedFile> ProcessedFiles { get; }
     DbSet<MatchResult> MatchResults { get; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);

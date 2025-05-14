@@ -73,6 +73,46 @@ namespace TaxReturnAutomation.Infrastructure.Data.Migrations
                     b.ToTable("BankTransactions", (string)null);
                 });
 
+            modelBuilder.Entity("TaxReturnAutomation.Domain.Entities.Invoice", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CustomerName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("InvoiceNumber")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("PurchaseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Invoices", (string)null);
+                });
+
             modelBuilder.Entity("TaxReturnAutomation.Domain.Entities.MatchResult", b =>
                 {
                     b.Property<Guid>("Id")
@@ -80,6 +120,9 @@ namespace TaxReturnAutomation.Infrastructure.Data.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("BankTransactionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("InvoiceId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("MatchConfidence")
@@ -93,15 +136,12 @@ namespace TaxReturnAutomation.Infrastructure.Data.Migrations
                     b.Property<DateTime>("MatchedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ReceiptId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
                     b.HasIndex("BankTransactionId")
                         .IsUnique();
 
-                    b.HasIndex("ReceiptId")
+                    b.HasIndex("InvoiceId")
                         .IsUnique();
 
                     b.ToTable("MatchResults", (string)null);
@@ -126,49 +166,14 @@ namespace TaxReturnAutomation.Infrastructure.Data.Migrations
                     b.Property<DateTime>("ProcessedAtUtc")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.HasKey("Id");
 
                     b.ToTable("ProcessedFiles", (string)null);
-                });
-
-            modelBuilder.Entity("TaxReturnAutomation.Domain.Entities.Receipt", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("CustomerName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime>("PurchaseDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ReceiptNumber")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("UploadedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Receipts", (string)null);
                 });
 
             modelBuilder.Entity("TaxReturnAutomation.Domain.Entities.BankTransaction", b =>
@@ -188,15 +193,15 @@ namespace TaxReturnAutomation.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("TaxReturnAutomation.Domain.Entities.Receipt", "Receipt")
+                    b.HasOne("TaxReturnAutomation.Domain.Entities.Invoice", "Invoice")
                         .WithOne()
-                        .HasForeignKey("TaxReturnAutomation.Domain.Entities.MatchResult", "ReceiptId")
+                        .HasForeignKey("TaxReturnAutomation.Domain.Entities.MatchResult", "InvoiceId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("BankTransaction");
 
-                    b.Navigation("Receipt");
+                    b.Navigation("Invoice");
                 });
 
             modelBuilder.Entity("TaxReturnAutomation.Domain.Entities.BankStatement", b =>

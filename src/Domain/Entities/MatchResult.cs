@@ -6,8 +6,8 @@ public class MatchResult
     public DateTime MatchedAt { get; private set; }
     public MatchConfidence MatchConfidence { get; private set; }
 
-    public Guid ReceiptId { get; private set; }
-    public Receipt? Receipt { get; private set; }
+    public Guid InvoiceId { get; private set; }
+    public Invoice? Invoice { get; private set; }
 
     public Guid BankTransactionId { get; private set; }
     public BankTransaction? BankTransaction { get; private set; }
@@ -15,14 +15,14 @@ public class MatchResult
     private MatchResult() { }
 
     public static MatchResult Create(
-        Guid receiptId,
+        Guid invoiceId,
         Guid bankTransactionId,
         decimal matchedAmount,
         MatchConfidence matchConfidence)
     {
         return new MatchResult
         {
-            ReceiptId = receiptId,
+            InvoiceId = invoiceId,
             BankTransactionId = bankTransactionId,
             MatchedAmount = matchedAmount,
             MatchedAt = DateTime.UtcNow,

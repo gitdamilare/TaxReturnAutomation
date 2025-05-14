@@ -6,7 +6,7 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
 
     public DbSet<BankStatement> BankStatements => Set<BankStatement>();
     public DbSet<BankTransaction> BankTransactions => Set<BankTransaction>();
-    public DbSet<Receipt> Receipts => Set<Receipt>();
+    public DbSet<Invoice> Invoices => Set<Invoice>();
     public DbSet<ProcessedFile> ProcessedFiles => Set<ProcessedFile>();
     public DbSet<MatchResult> MatchResults => Set<MatchResult>();
 

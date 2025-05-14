@@ -12,7 +12,7 @@ namespace TaxReturnAutomation.Infrastructure.Data.Migrations
         {
             migrationBuilder.AlterColumn<string>(
                 name: "Description",
-                table: "Receipts",
+                table: "Invoices",
                 type: "nvarchar(2000)",
                 maxLength: 2000,
                 nullable: false,
@@ -36,7 +36,7 @@ namespace TaxReturnAutomation.Infrastructure.Data.Migrations
         {
             migrationBuilder.AlterColumn<string>(
                 name: "Description",
-                table: "Receipts",
+                table: "Invoices",
                 type: "nvarchar(500)",
                 maxLength: 500,
                 nullable: false,
