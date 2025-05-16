@@ -7,13 +7,16 @@ public class AzureFormRecognizerBankStatementParser : IBankStatementParser
 {
     private readonly IFileStorageService _fileStorageService;
     private readonly ILogger<AzureFormRecognizerBankStatementParser> _logger;
+    private readonly DocumentIntelligenceClient _documentIntelligenceClient;
 
     public AzureFormRecognizerBankStatementParser(
         IFileStorageService fileStorageService,
-        ILogger<AzureFormRecognizerBankStatementParser> logger)
+        ILogger<AzureFormRecognizerBankStatementParser> logger,
+        DocumentIntelligenceClient documentIntelligenceClient)
     {
         _fileStorageService = fileStorageService;
         _logger = logger;
+        _documentIntelligenceClient = documentIntelligenceClient;
     }
 
 
@@ -38,24 +41,13 @@ public class AzureFormRecognizerBankStatementParser : IBankStatementParser
     {
         try
         {
-            //TODO: Move to configuration
-            string endpoint = "<add-endpoint>";
-            string key = "<add-key>";
-
-            AzureKeyCredential credential = new AzureKeyCredential(key);
-            DocumentIntelligenceClient client = new DocumentIntelligenceClient(
-                new Uri(endpoint),
-                credential
-                );
-
-            string modelId = "deutsche_bank_statement";
+            const string modelId = "deutsche_bank_statement";
             var binaryData = new BinaryData(fileData);
             var analyzeDocumentOptions = new AnalyzeDocumentOptions(modelId, binaryData)
             {
                 Locale = "de-DE",
             };
-
-            Operation<AnalyzeResult> operation = await client.AnalyzeDocumentAsync(WaitUntil.Completed, analyzeDocumentOptions);
+            Operation<AnalyzeResult> operation = await _documentIntelligenceClient.AnalyzeDocumentAsync(WaitUntil.Completed, analyzeDocumentOptions);
             AnalyzeResult result = operation.Value;
 
             _logger.LogInformation("Analyzed document with model: {ModelId}", result.ModelId);
