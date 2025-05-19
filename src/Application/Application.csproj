@@ -3,6 +3,7 @@
   <PropertyGroup>
     <RootNamespace>TaxReturnAutomation.Application</RootNamespace>
     <AssemblyName>TaxReturnAutomation.Application</AssemblyName>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
