@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Azure.AI.DocumentIntelligence;
 using TaxReturnAutomation.Application.Common.DTOs;
+using TaxReturnAutomation.Infrastructure.Extensions;
 
 namespace TaxReturnAutomation.Infrastructure.Parsing;
 public class AzureFormRecognizerBankStatementParser : IBankStatementParser
@@ -26,7 +27,7 @@ public class AzureFormRecognizerBankStatementParser : IBankStatementParser
         ValidateFileData(fileData);
 
         var document = await AnalyzeDocument(fileData);
-        var bankStatementDto = ProcessAnalyzeResult(document, ExtractFileNameFromUri(fileUri));
+        var bankStatementDto = ProcessAnalyzeResult(document, fileUri.GetFileName());
 
         if(bankStatementDto == null)
         {
@@ -166,7 +167,7 @@ public class AzureFormRecognizerBankStatementParser : IBankStatementParser
     }
 
     private static string? GetFieldValue(
-        IReadOnlyDictionary<string, DocumentField> fields,
+        DocumentFieldDictionary fields,
         string key)
     {
         return fields.TryGetValue(key, out var field) && field.FieldType == DocumentFieldType.String
@@ -226,8 +227,6 @@ public class AzureFormRecognizerBankStatementParser : IBankStatementParser
 
         return (null, null);
     }
-
-    private static string ExtractFileNameFromUri(Uri fileUri) => Path.GetFileName(fileUri.LocalPath);
 
     private void ValidateFileData(byte[] fileData)
     {

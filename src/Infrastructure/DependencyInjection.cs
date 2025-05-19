@@ -55,5 +55,8 @@ public static class DependencyInjection
 
         builder.Services.AddScoped<IInvoiceParser, AzureFormRecongnizerInvoiceParser>();
         builder.Services.AddScoped<IInvoiceStorage, InvoiceRepository>();
+
+        builder.Services.AddScoped<IAnalyzeResultCache, MemoryAnalyzeResultCache>();
+        builder.Services.AddMemoryCache();
     }
 }
