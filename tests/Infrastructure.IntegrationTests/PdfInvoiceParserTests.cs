@@ -2,7 +2,6 @@
 using Azure;
 using Azure.AI.DocumentIntelligence;
 using Infrastructure.IntegrationTests.Utilities;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
@@ -25,7 +24,8 @@ internal class PdfInvoiceParserTests
     //TODO: Update the test case file before pushing to git
     private static readonly object[] ValidTestCaseSource =
     [
-        new object[] { "Rechnung08-2023-Eugeniu.pdf", "08-2023", "2400.00" }
+        new object[] { "Rechnung08-2023-Eugeniu.pdf", "08-2023", "2400.00", string.Empty, "21.11.2023" },
+        new object[] { "Invoice_130336720_XEE0YL.pdf", "130336720", "1582.44", "143512", "24.11.2023" }
     ];
 
     [SetUp]
@@ -43,8 +43,8 @@ internal class PdfInvoiceParserTests
             new AzureKeyCredential(key));
         _fileStorageService = Substitute.For<IFileStorageService>();
 
-        _parser = new AzureFormRecongnizerInvoiceParser(
-            NullLogger<AzureFormRecongnizerInvoiceParser>.Instance,
+        _parser = new AzureFormRecognizerInvoiceParser(
+            NullLogger<AzureFormRecognizerInvoiceParser>.Instance,
             _fileStorageService,
             client,
             _analyseResultCache);
@@ -60,7 +60,9 @@ internal class PdfInvoiceParserTests
     public async Task ParseAsync_ShouldReturnInvoiceDto_WhenFileIsValid(
         string fileName,
         string invoiceId,
-        string totalAmount)
+        string totalAmount,
+        string customerId,
+        string date)
     {
         var fileBytes = File.ReadAllBytes(GetFilePath(fileName));
         _fileStorageService.DownloadFileAsync(Arg.Any<Uri>(), Arg.Any<CancellationToken>())
@@ -72,5 +74,7 @@ internal class PdfInvoiceParserTests
         result.FileName.ShouldBe(fileName);
         result.InvoiceNumber.ShouldBe(invoiceId);
         result.TotalAmount.ShouldBe(decimal.Parse(totalAmount, NumberStyles.Currency, CultureInfo.InvariantCulture));
+        result.CustomerId.ShouldBe(customerId);
+        result.PurchaseDate.ShouldBe(date == "" ? DateTime.MinValue : DateTime.Parse(date));
     }
 }

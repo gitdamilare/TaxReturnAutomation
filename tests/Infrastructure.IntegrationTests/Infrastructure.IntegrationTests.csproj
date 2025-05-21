@@ -41,9 +41,16 @@
     <None Update="Assets\BankStatementSample_2.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Assets\Invoices\Invoice_130336720_XEE0YL.pdf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\Invoices\Rechnung08-2023-Eugeniu.pdf">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\Invoices\" />
   </ItemGroup>
 
 </Project>
