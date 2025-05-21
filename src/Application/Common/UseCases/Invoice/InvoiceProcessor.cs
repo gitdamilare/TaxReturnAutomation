@@ -37,16 +37,20 @@ public class InvoiceProcessor : IInvoiceProcessor
         {
             var invoiceDto = await _invoiceParser.ParseAsync(request.FileUri, cancellationToken);
 
-            var isValid = invoiceDto.ValidationErrors.Count == 0;
+            var isValid = invoiceDto.ProcessingErrorMessages.Count == 0;
+            var processingErrorMessage = string.Join(", ", invoiceDto.ProcessingErrorMessages);
             await TrackProcessingResultAsync(
                 request.FileName,
                 isValid ? ProcessStatus.Completed : ProcessStatus.Failed,
+                processingErrorMessage,
                 cancellationToken);
 
             if (!isValid)
             {
-                _logger.LogWarning("Invoice validation failed for file: {BlobName}. Errors: {Errors}",
-                    request.FileName, string.Join("; ", invoiceDto.ValidationErrors));
+                _logger.LogWarning(
+                    "Invoice validation failed for file: {BlobName}. Errors: {Errors}",
+                    request.FileName,
+                    processingErrorMessage);
                 return default;
             }
 
@@ -64,17 +68,22 @@ public class InvoiceProcessor : IInvoiceProcessor
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error processing invoice file: {BlobName}", request.FileName);
-            await TrackProcessingResultAsync(request.FileName, ProcessStatus.Failed, cancellationToken);
+            await TrackProcessingResultAsync(request.FileName, ProcessStatus.Failed, $"Error processing invoice file: {request.FileName}", cancellationToken);
             throw;
         }
     }
 
-    private Task TrackProcessingResultAsync(string fileName, ProcessStatus status, CancellationToken cancellationToken)
+    private Task TrackProcessingResultAsync(
+        string fileName,
+        ProcessStatus status,
+        string validationErrorMesage,
+        CancellationToken cancellationToken)
     {
         return _fileProcessingTracker.MarkFileAsProcessedAsync(
             fileName,
             FileType.Invoice,
             status,
+            validationErrorMesage,
             cancellationToken);
     }
 }

@@ -1,7 +1,6 @@
 ﻿using Azure;
 using Azure.AI.DocumentIntelligence;
 using TaxReturnAutomation.Application.Common.DTOs;
-using TaxReturnAutomation.Domain.Entities;
 using TaxReturnAutomation.Infrastructure.Extensions;
 
 namespace TaxReturnAutomation.Infrastructure.Parsing;
@@ -98,13 +97,10 @@ public class AzureFormRecognizerInvoiceParser : IInvoiceParser
         if (invoiceDto.TotalAmount <= 0)
             validationErrors.Add("Total amount missing or invalid");
 
-        if (string.IsNullOrWhiteSpace(invoiceDto.CustomerId))
-            validationErrors.Add("Customer name missing");
-
         if (string.IsNullOrWhiteSpace(invoiceDto.InvoiceNumber))
             validationErrors.Add("Invoice number missing");
 
-        invoiceDto.ValidationErrors = validationErrors;
+        invoiceDto.ProcessingErrorMessages = validationErrors;
     }
 
     private static void UpdateMissingInvoiceContent(InvoiceDto invoiceDto, AnalyzedDocument document)

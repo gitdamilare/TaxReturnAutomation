@@ -42,12 +42,12 @@ namespace Functions.Triggers
                 var result = await _bankStatementProcessor.ProcessAsync(request, cancellationToken);
 
                 _logger.LogInformation("Processed file: {BlobName} with result: {Result} and Transcation Count", name, result, result.TransactionCount);
-                await _fileProcessingTracker.MarkFileAsProcessedAsync(name, FileType.BankStatement, ProcessStatus.Completed, cancellationToken);
+                await _fileProcessingTracker.MarkFileAsProcessedAsync(name, FileType.BankStatement, ProcessStatus.Completed, cancellationToken: cancellationToken);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error processing file: {BlobName}", name);
-                await _fileProcessingTracker.MarkFileAsProcessedAsync(name, FileType.BankStatement, ProcessStatus.Failed, cancellationToken);
+                await _fileProcessingTracker.MarkFileAsProcessedAsync(name, FileType.BankStatement, ProcessStatus.Failed, cancellationToken: cancellationToken);
                 throw;
             }
         }

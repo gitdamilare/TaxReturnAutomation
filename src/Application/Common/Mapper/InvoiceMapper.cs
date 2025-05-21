@@ -4,14 +4,10 @@ public class InvoiceMapper
     public static Invoice MapFromDto(
         InvoiceDto invoiceDto)
     {
-        var description = invoiceDto.ValidationErrors.Count != 0
-            ? string.Join(", ", invoiceDto.ValidationErrors)
-            : invoiceDto.Description;
-
         var invoice = Invoice.Create(
             fileName: invoiceDto.FileName,
             amount: invoiceDto.TotalAmount,
-            description: description,
+            description: invoiceDto.Description,
             invoiceNumber: invoiceDto.InvoiceNumber,
             customerId: invoiceDto.CustomerId,
             customerName: invoiceDto.CustomerName,

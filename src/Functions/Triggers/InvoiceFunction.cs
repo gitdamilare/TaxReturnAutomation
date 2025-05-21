@@ -1,7 +1,6 @@
 using Azure.Storage.Blobs;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;
-using TaxReturnAutomation.Application.Common.Interfaces;
 using TaxReturnAutomation.Application.Common.UseCases.Invoice;
 
 namespace Functions.Triggers
@@ -9,16 +8,13 @@ namespace Functions.Triggers
     public class InvoiceFunction
     {
         private readonly ILogger<InvoiceFunction> _logger;
-        private readonly IFileProcessingTracker _fileProcessingTracker;
         private readonly IInvoiceProcessor _invoiceProcessor;
 
         public InvoiceFunction(
             ILogger<InvoiceFunction> logger,
-            IFileProcessingTracker fileProcessingTracker,
             IInvoiceProcessor invoiceProcessor)
         {
             _logger = logger;
-            _fileProcessingTracker = fileProcessingTracker;
             _invoiceProcessor = invoiceProcessor;
         }
 
