@@ -1,18 +1,19 @@
 ﻿using Azure;
 using Azure.AI.DocumentIntelligence;
 using TaxReturnAutomation.Application.Common.DTOs;
+using TaxReturnAutomation.Domain.Entities;
 using TaxReturnAutomation.Infrastructure.Extensions;
 
 namespace TaxReturnAutomation.Infrastructure.Parsing;
-public class AzureFormRecongnizerInvoiceParser : IInvoiceParser
+public class AzureFormRecognizerInvoiceParser : IInvoiceParser
 {
-    private readonly ILogger<AzureFormRecongnizerInvoiceParser> _logger;
+    private readonly ILogger<AzureFormRecognizerInvoiceParser> _logger;
     private readonly IFileStorageService _fileStorageService;
     private readonly DocumentIntelligenceClient _documentIntelligenceClient;
     private readonly IAnalyzeResultCache _analyzeResultCache;
 
-    public AzureFormRecongnizerInvoiceParser(
-        ILogger<AzureFormRecongnizerInvoiceParser> logger,
+    public AzureFormRecognizerInvoiceParser(
+        ILogger<AzureFormRecognizerInvoiceParser> logger,
         IFileStorageService fileStorageService,
         DocumentIntelligenceClient documentIntelligenceClient,
         IAnalyzeResultCache analyzeResultCache)
@@ -82,10 +83,28 @@ public class AzureFormRecongnizerInvoiceParser : IInvoiceParser
             var invoiceDto = ProcessDocumentFields(document, fileName);
 
             UpdateMissingInvoiceContent(invoiceDto, document);
+
+            ValidateInvoiceContent(invoiceDto);
             invoiceDtos.Add(invoiceDto);
         }
 
         return invoiceDtos;
+    }
+
+    private static void ValidateInvoiceContent(InvoiceDto invoiceDto)
+    {
+        var validationErrors = new List<string>();
+
+        if (invoiceDto.TotalAmount <= 0)
+            validationErrors.Add("Total amount missing or invalid");
+
+        if (string.IsNullOrWhiteSpace(invoiceDto.CustomerId))
+            validationErrors.Add("Customer name missing");
+
+        if (string.IsNullOrWhiteSpace(invoiceDto.InvoiceNumber))
+            validationErrors.Add("Invoice number missing");
+
+        invoiceDto.ValidationErrors = validationErrors;
     }
 
     private static void UpdateMissingInvoiceContent(InvoiceDto invoiceDto, AnalyzedDocument document)
@@ -117,14 +136,15 @@ public class AzureFormRecongnizerInvoiceParser : IInvoiceParser
         return invoiceDto;
     }
 
-    private readonly Dictionary<string, Action<DocumentField, InvoiceDto>> _fieldMappings = new ()
+    private readonly OrderedDictionary<string, Action<DocumentField, InvoiceDto>> _fieldMappings = new ()
     {
         { DocumentFieldIdentifiers.InvoiceNumber, (field, dto) => dto.InvoiceNumber = field.Content },
         { DocumentFieldIdentifiers.InvoiceDate, (field, dto) => dto.PurchaseDate = DateTime.Parse(field.Content) },
         { DocumentFieldIdentifiers.CustomerName, (field, dto) => dto.CustomerName = field.Content.ToString() },
-        { DocumentFieldIdentifiers.TotalAmount, (field, dto) => dto.TotalAmount = decimal.Parse(field.Content.ToString() ?? "0", NumberStyles.Currency, CultureInfo.InvariantCulture) },
-        { DocumentFieldIdentifiers.TotalTax, (field, dto) => dto.TotalTax = decimal.Parse(field.Content.ToString() ?? "0", NumberStyles.Currency, CultureInfo.InvariantCulture) },
-        { DocumentFieldIdentifiers.SubTotal, (field, dto) => dto.SubTotal = decimal.Parse(field.Content.ToString() ?? "0", NumberStyles.Currency, CultureInfo.InvariantCulture) },
+        { DocumentFieldIdentifiers.CustomerId, (field, dto) => dto.CustomerId = field.Content.ToString() },
+        { DocumentFieldIdentifiers.TotalTax, (field, dto) => dto.TotalTax = ParseAmount(field.Content.ToString()) },
+        { DocumentFieldIdentifiers.SubTotal, (field, dto) => dto.SubTotal = ParseAmount(field.Content.ToString()) },
+        { DocumentFieldIdentifiers.TotalAmount, (field, dto) => dto.TotalAmount = ParseAmount(field.Content.ToString()) },
     };
 
     private static decimal ProcessTotalInvoiceAmountFromItems(AnalyzedDocument document)
@@ -158,5 +178,29 @@ public class AzureFormRecongnizerInvoiceParser : IInvoiceParser
             _logger.LogInformation("File data is empty");
             throw new ArgumentException("Invalid file data");
         }
+    }
+
+    private static decimal ParseAmount(string? amountStr)
+    {
+        if (string.IsNullOrWhiteSpace(amountStr)) return 0;
+
+        var sanitizedAmount = amountStr
+            .Replace(".", "")  // remove thousands separator
+            .Replace(",", ".") //convert decimal separator
+            .Replace(" ", "")
+            .Replace("+", "")
+            .Replace("-", "")
+            .Trim();
+
+        if (!decimal.TryParse(
+            sanitizedAmount,
+            NumberStyles.Currency,
+            CultureInfo.InvariantCulture,
+            out decimal amount))
+        {
+            return 0;
+        }
+
+        return Math.Abs(amount);
     }
 }

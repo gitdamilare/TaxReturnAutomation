@@ -53,7 +53,7 @@ public static class DependencyInjection
         builder.Services.AddTransient<IBankStatementParser, AzureFormRecognizerBankStatementParser>();
         builder.Services.AddScoped<IBankStatementRepository, BankStatementRepository>();
 
-        builder.Services.AddScoped<IInvoiceParser, AzureFormRecongnizerInvoiceParser>();
+        builder.Services.AddScoped<IInvoiceParser, AzureFormRecognizerInvoiceParser>();
         builder.Services.AddScoped<IInvoiceStorage, InvoiceRepository>();
 
         builder.Services.AddScoped<IAnalyzeResultCache, MemoryAnalyzeResultCache>();

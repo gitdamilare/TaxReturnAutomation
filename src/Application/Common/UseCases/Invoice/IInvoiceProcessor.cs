@@ -2,7 +2,7 @@
 
 public interface IInvoiceProcessor
 {
-    Task<ProcessInvoiceResponse> ProcessAsync(
+    Task<ProcessInvoiceResponse?> ProcessAsync(
         ProcessInvoiceRequest request,
         CancellationToken cancellationToken);
 }
