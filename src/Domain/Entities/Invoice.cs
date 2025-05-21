@@ -4,6 +4,7 @@ public class Invoice
     public Guid Id { get; private set; } = Guid.NewGuid();
     public string FileName { get; private set; } = string.Empty;
     public string InvoiceNumber { get; private set; } = string.Empty;
+    public string CustomerId { get; private set; } = string.Empty;
     public string CustomerName { get; private set; } = string.Empty;
     public DateTime UploadedAt { get; private set; }
     public DateTime PurchaseDate { get; private set; }
@@ -16,7 +17,8 @@ public class Invoice
         string fileName,
         decimal amount,
         string description,
-        string InvoiceNumber,
+        string invoiceNumber,
+        string customerId,
         string customerName,
         DateTime purchaseDate)
     {
@@ -27,7 +29,8 @@ public class Invoice
             UploadedAt = DateTime.UtcNow,
             TotalAmount = amount,
             Description = description,
-            InvoiceNumber = InvoiceNumber,
+            InvoiceNumber = invoiceNumber,
+            CustomerId = customerId,
             CustomerName = customerName,
             PurchaseDate = purchaseDate
         };
