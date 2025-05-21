@@ -3,30 +3,33 @@ public class InvoiceConfiguration : IEntityTypeConfiguration<Invoice>
 {
     public void Configure(EntityTypeBuilder<Invoice> builder)
     {
-        const string TableName = "Invoices";
-        const int FileNameMaxLength = 255;
-        const int DescriptionMaxLength = 2000;
-        const int CommonMaxLength = 100;
+        const string tableName = "Invoices";
+        const int fileNameMaxLength = 255;
+        const int descriptionMaxLength = 2000;
+        const int commonMaxLength = 100;
 
-        builder.ToTable(TableName);
+        builder.ToTable(tableName);
 
         builder.HasKey(r => r.Id);
 
         builder.Property(r => r.FileName)
             .IsRequired()
-            .HasMaxLength(FileNameMaxLength);
+            .HasMaxLength(fileNameMaxLength);
 
         builder.Property(r => r.UploadedAt)
             .IsRequired();
 
         builder.Property(r => r.Description)
             .IsRequired()
-            .HasMaxLength(DescriptionMaxLength);
+            .HasMaxLength(descriptionMaxLength);
 
         builder.Property(r => r.InvoiceNumber)
-            .HasMaxLength(CommonMaxLength);
+            .HasMaxLength(commonMaxLength);
 
         builder.Property(r => r.CustomerName)
-            .HasMaxLength(CommonMaxLength);
+            .HasMaxLength(commonMaxLength);
+
+        builder.Property(r => r.CustomerId)
+            .HasMaxLength(commonMaxLength);
     }
 }

@@ -1,4 +1,6 @@
-﻿using TaxReturnAutomation.Infrastructure.Data;
+﻿using Azure;
+using Azure.AI.DocumentIntelligence;
+using TaxReturnAutomation.Infrastructure.Data;
 using TaxReturnAutomation.Infrastructure.Data.Interceptors;
 using TaxReturnAutomation.Infrastructure.Parsing;
 using TaxReturnAutomation.Infrastructure.Persistence;
@@ -34,9 +36,27 @@ public static class DependencyInjection
 
         builder.Services.AddSingleton(TimeProvider.System);
 
+        builder.Services.AddSingleton(sp =>
+        {
+            var endpoint = builder.Configuration["AzureAI:DocumentIntelligence:Endpoint"];
+            var key = builder.Configuration["AzureAI:DocumentIntelligence:Key"];
+
+            Guard.Against.NullOrWhiteSpace(endpoint, message: "Azure Document Intelligence endpoint not found.");
+            Guard.Against.NullOrWhiteSpace(key, message: "Azure Document Intelligence key not found.");
+
+            return new DocumentIntelligenceClient(new Uri(endpoint), new AzureKeyCredential(key));
+        });
+
         builder.Services.AddTransient<IFileStorageService, BlobStorageService>();
-        builder.Services.AddTransient<IBankStatementParser, AzureFormRecognizerBankStatementParser>();
         builder.Services.AddScoped<IFileProcessingTracker, FileProcessingTracker>();
+
+        builder.Services.AddTransient<IBankStatementParser, AzureFormRecognizerBankStatementParser>();
         builder.Services.AddScoped<IBankStatementRepository, BankStatementRepository>();
+
+        builder.Services.AddScoped<IInvoiceParser, AzureFormRecognizerInvoiceParser>();
+        builder.Services.AddScoped<IInvoiceStorage, InvoiceRepository>();
+
+        builder.Services.AddScoped<IAnalyzeResultCache, MemoryAnalyzeResultCache>();
+        builder.Services.AddMemoryCache();
     }
 }
