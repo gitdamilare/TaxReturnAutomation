@@ -1,58 +1,170 @@
-﻿# TaxReturnAutomation
+﻿# 📂 TaxMate - Automated Invoice & Bank Transaction Matcher
 
-The project was generated using the [Clean.Architecture.Solution.Template](https://github.com/jasontaylordev/CleanArchitecture) version 9.0.8.
+A cloud-native backend solution built with **.NET 8**, **Azure Functions**, **Azure AI Document Intelligence**, and **Clean Architecture** that automates matching scanned invoices to bank transactions for tax return purposes.
 
-## Build
+---
 
-Run `dotnet build -tl` to build the solution.
+## 🔍 Problem Statement
 
-## Run
+Manually matching years of invoices to transactions across multiple bank statements is time-consuming and error-prone. **TaxMate** solves this by:
 
-To run the web application:
+- Extracting data from **PDF bank statements** and **invoices**
+- Storing transactions and invoices metadata
+- Matching invoices to transactions using identifiers (invoice number, customer ID, etc.)
+- Exporting results to **Excel**
+- Built to be scalable, testable, and Azure-ready
 
-```bash
-cd .\src\Web\
-dotnet watch run
+---
+
+## 🧱 Architecture Overview
+
+![architecture-diagram](./docs/system-architecture.png)
+
+### Key Concepts
+
+| Layer              | Responsibility                                                                 |
+|--------------------|---------------------------------------------------------------------------------|
+| **Domain**         | Core business logic (e.g. `BankStatment`, `BankTransaction`, `invoice`, `MatchResult`) |
+| **Application**    | Use cases, DTOs, interfaces (no framework dependencies)                         |
+| **Infrastructure** | Azure Storage, Azure AI Document Intelligence, EF Core persistence              |
+| **Functions**      | Blob Triggers, Queue Triggers                                 |
+
+---
+
+## ☁️ Azure Services Used
+
+| Service                     | Purpose                                      |
+|-----------------------------|----------------------------------------------|
+| **Azure Blob Storage**      | File uploads (bank statements, invoices)     |
+| **Azure Queue Storage**     | Event-driven function coordination           |
+| **Azure SQL Database**      | Persistent storage via EF Core               |
+| **Azure Functions**         | Event triggers, processing & orchestration   |
+| **Azure AI Document Intelligence**   | Table/Invoice text extraction     |
+
+---
+
+## ✅ Features
+
+- 🧾 Upload **bank statements** and **invoices** (PDFs)
+- 🧠 Use OCR and table parsers to extract structured data
+- 🔄 Match receipts to bank transactions based on heuristics
+- 💾 Store results in Azure SQL and optionally export to Excel
+- 🧱 Built with **Clean Architecture** and **DDD principles**
+- ♻️ Idempotent processing for duplicate uploads
+
+---
+
+## 🧪 Testing Strategy
+
+- **Domain Layer**: Pure unit tests with NUnit
+- **Application Layer**: Use case tests with mocked interfaces
+- **Infrastructure Layer**: Integration tests (e.g., PDF parsing, DB interactions)
+- **Functions**: E2E tests for trigger-function flow
+
+---
+
+## 🗂️ Folder Structure
+
 ```
 
-Navigate to https://localhost:5001. The application will automatically reload if you change any of the source files.
+TaxMate
+├── src
+│   ├── TaxMate.Domain
+│   ├── TaxMate.Application
+│   ├── TaxMate.Infrastructure
+│   └── TaxMate.Functions
+├── tests
+│   ├── TaxMate.Domain.Tests
+│   ├── TaxMate.Application.Tests
+│   └── TaxMate.Functions.Tests
+└── docs
+└── system-architecture.png
 
-## Code Styles & Formatting
+````
 
-The template includes [EditorConfig](https://editorconfig.org/) support to help maintain consistent coding styles for multiple developers working on the same project across various editors and IDEs. The **.editorconfig** file defines the coding styles applicable to this solution.
+---
 
-## Code Scaffolding
+## 🚀 Getting Started (Local Development)
 
-The template includes support to scaffold new commands and queries.
+1. **Clone the repo**
 
-Start in the `.\src\Application\` folder.
+   ```bash
+   git clone https://github.com/gitdamilare/TaxReturnAutomation.git
+   cd taxmate
+   ````
 
-Create a new command:
+2. **Configure Environment**
 
-```
-dotnet new ca-usecase --name CreateTodoList --feature-name TodoLists --usecase-type command --return-type int
-```
+   Create `local.settings.json` in `TaxMate.Functions`:
 
-Create a new query:
+   ```json
+   {
+     "IsEncrypted": false,
+     "Values": {
+       "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+       "ConnectionStrings:TaxReturnAutomationDb": "Server=(localdb)\\mssqllocaldb;Database=TaxMateDb;Trusted_Connection=True;",
+       "AzureAI:DocumentIntelligence:Key": "azureai-documentintelligence-key",
+       "AzureAI:DocumentIntelligence:Endpoint": "azureai-documentintelligence-endpoint",
+     }
+   }
+   ```
 
-```
-dotnet new ca-usecase -n GetTodos -fn TodoLists -ut query -rt TodosVm
-```
+3. **Run the Functions project**
 
-If you encounter the error *"No templates or subcommands found matching: 'ca-usecase'."*, install the template and try again:
+   ```bash
+   func start
+   ```
 
-```bash
-dotnet new install Clean.Architecture.Solution.Template::9.0.8
-```
+4. **Run tests**
 
-## Test
+   ```bash
+   dotnet test
+   ```
 
-The solution contains unit, integration, and functional tests.
+---
 
-To run the tests:
-```bash
-dotnet test
-```
+## 📌 How It Works
 
-## Help
-To learn more about the template go to the [project website](https://github.com/jasontaylordev/CleanArchitecture). Here you can find additional guidance, request new features, report a bug, and discuss the template with other users.
+1. Upload PDF files (bank statement or invoice) to Azure Blob Storage
+2. A **BlobTrigger Function** routes the file to the appropriate processing queue
+3. A **BankStatementProcessor** or **InvoiceProcessor** parses the file and stores data in Azure SQL
+4. A **MatchingEngineFunction** runs to match invoices ↔ transactions
+5. Results can be exported as an Excel report
+
+---
+
+## 🛠️ Technologies
+
+* .NET 8
+* Azure Functions
+* Entity Framework Core
+* Azure Blob Storage + Queue
+* Azure AI Document Intelligence
+* Clean Architecture + DDD
+
+---
+
+## 📈 Future Enhancements
+
+* ✅ Web admin dashboard (Blazor/Azure Static Web App)
+* ✅ Export to Excel and download from secure endpoint
+* ✅ Support for more banks and invoice formats
+* ✅ Auth via Azure AD or GitHub login
+
+---
+
+## 🙋‍♂️ Author
+
+**Oluwadamilare Oyebanji**
+Senior Software Engineer & Cloud Architect
+📧 [damilareoyebanji@gmail.com](mailto:damilareoyebanji@gmail.com)
+🔗 [LinkedIn](https://www.linkedin.com/in/oyebanji-dami/)
+🔗 [GitHub](https://github.com/gitdamilare)
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+``
